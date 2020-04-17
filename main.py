@@ -15,21 +15,9 @@ def main():
     load_dotenv()
 
     fetch_spacex_last_launch()
+    fetch_hubble()
     create_images_for_instagram()
-
-    files_images = os.listdir(INSTAGRAM_IMAGES_DIRECTORY)
-    with open('space_quotes.txt', 'r', encoding='utf-8') as file:
-        quotes = file.read().split('\n')
-
-    bot = Bot()
-    bot.login(
-        is_threaded=False,
-        username=os.getenv('INSTAGRAM_USERNAME'),
-        password=os.getenv('INSTAGRAM_PASSWORD')
-    )
-    for file_image in files_images:
-        path = INSTAGRAM_IMAGES_DIRECTORY + file_image
-        bot.upload_photo(path, caption=random.choice(quotes))
+    post_images_to_instagram()
 
 
 def download_file(url, path: Path):
@@ -62,6 +50,17 @@ def fetch_spacex_last_launch(directory=IMAGES_DIRECTORY):
         download_file(image_url, image_path)
 
 
+def fetch_hubble():
+    host = 'http://hubblesite.org'
+    method = '/api/v3/images/all'
+    url = host + method
+    response = requests.get(url)
+
+    for image_data in response.json():
+        image_id = image_data['id']
+        download_hubble_img(image_id)
+
+
 def get_extension_file(url):
     return url.split('.')[-1]
 
@@ -92,14 +91,6 @@ def get_proportional_size(width, height, max_size=1080):
 
 
 def create_images_for_instagram():
-    host = 'http://hubblesite.org'
-    method = '/api/v3/images/all'
-    url = host + method
-    response = requests.get(url)
-
-    for image_data in response.json():
-        image_id = image_data['id']
-        download_hubble_img(image_id)
 
     images_files = os.listdir(IMAGES_DIRECTORY)
     directory = Path(INSTAGRAM_IMAGES_DIRECTORY)
@@ -122,6 +113,22 @@ def create_images_for_instagram():
         new_image_file = image_file.split('.')[0] + '.jpg'
         new_image_path = INSTAGRAM_IMAGES_DIRECTORY + new_image_file
         new_image.save(new_image_path, format='JPEG')
+
+
+def post_images_to_instagram():
+    files_images = os.listdir(INSTAGRAM_IMAGES_DIRECTORY)
+    with open('space_quotes.txt', 'r', encoding='utf-8') as file:
+        quotes = file.read().split('\n')
+
+    bot = Bot()
+    bot.login(
+        is_threaded=False,
+        username=os.getenv('INSTAGRAM_USERNAME'),
+        password=os.getenv('INSTAGRAM_PASSWORD')
+    )
+    for file_image in files_images:
+        path = INSTAGRAM_IMAGES_DIRECTORY + file_image
+        bot.upload_photo(path, caption=random.choice(quotes))
 
 
 if __name__ == '__main__':
