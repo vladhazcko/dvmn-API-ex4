@@ -11,7 +11,6 @@ INSTAGRAM_IMAGES_DIRECTORY = 'images_instagram/'
 
 
 def create_images_for_instagram():
-
     images_files = os.listdir(IMAGES_DIRECTORY)
     directory = Path(INSTAGRAM_IMAGES_DIRECTORY)
     directory.mkdir(parents=True, exist_ok=True)
@@ -43,7 +42,7 @@ def get_proportional_size(width, height, max_size=1080):
     return width, height
 
 
-def post_images_to_instagram():
+def post_images_to_instagram(username, password):
     files_images = os.listdir(INSTAGRAM_IMAGES_DIRECTORY)
     with open('space_quotes.txt', 'r', encoding='utf-8') as file:
         quotes = file.read().split('\n')
@@ -51,8 +50,8 @@ def post_images_to_instagram():
     bot = Bot()
     bot.login(
         is_threaded=False,
-        username=os.getenv('INSTAGRAM_USERNAME'),
-        password=os.getenv('INSTAGRAM_PASSWORD')
+        username=username,
+        password=password
     )
     for file_image in files_images:
         path = INSTAGRAM_IMAGES_DIRECTORY + file_image
@@ -61,5 +60,8 @@ def post_images_to_instagram():
 
 def main():
     load_dotenv()
+    username = os.getenv('INSTAGRAM_USERNAME'),
+    password = os.getenv('INSTAGRAM_PASSWORD')
+
     create_images_for_instagram()
-    post_images_to_instagram()
+    post_images_to_instagram(username, password)
