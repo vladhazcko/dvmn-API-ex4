@@ -1,5 +1,6 @@
 import requests
 from pathlib import Path
+from scripts import download_file
 
 IMAGES_DIRECTORY = 'images/'
 
@@ -26,12 +27,6 @@ def fetch_spacex_last_launch(directory=IMAGES_DIRECTORY):
     for image_number, image_url in enumerate(images_urls):
         image_path = directory / f'spacex{image_number}.jpg'
         download_file(image_url, image_path)
-
-
-def download_file(url, path: Path):
-    response = requests.get(url)
-    response.raise_for_status()
-    path.write_bytes(response.content)
 
 
 def main():
