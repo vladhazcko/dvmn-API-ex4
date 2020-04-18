@@ -5,6 +5,7 @@ from PIL import Image
 from instabot import Bot
 from dotenv import load_dotenv
 import random
+from scripts import download_file
 
 Image.MAX_IMAGE_PIXELS = 900000000
 IMAGES_DIRECTORY = 'images/'
@@ -13,17 +14,13 @@ INSTAGRAM_IMAGES_DIRECTORY = 'images_instagram/'
 
 def main():
     load_dotenv()
+    username = os.getenv('INSTAGRAM_USERNAME'),
+    password = os.getenv('INSTAGRAM_PASSWORD')
 
     fetch_spacex_last_launch()
     fetch_hubble()
     create_images_for_instagram()
-    post_images_to_instagram()
-
-
-def download_file(url, path: Path):
-    response = requests.get(url)
-    response.raise_for_status()
-    path.write_bytes(response.content)
+    post_images_to_instagram(username, password)
 
 
 def fetch_spacex_last_launch(directory=IMAGES_DIRECTORY):
@@ -115,7 +112,7 @@ def create_images_for_instagram():
         new_image.save(new_image_path, format='JPEG')
 
 
-def post_images_to_instagram():
+def post_images_to_instagram(username, password):
     files_images = os.listdir(INSTAGRAM_IMAGES_DIRECTORY)
     with open('space_quotes.txt', 'r', encoding='utf-8') as file:
         quotes = file.read().split('\n')
@@ -123,8 +120,8 @@ def post_images_to_instagram():
     bot = Bot()
     bot.login(
         is_threaded=False,
-        username=os.getenv('INSTAGRAM_USERNAME'),
-        password=os.getenv('INSTAGRAM_PASSWORD')
+        username=username,
+        password=password
     )
     for file_image in files_images:
         path = INSTAGRAM_IMAGES_DIRECTORY + file_image
