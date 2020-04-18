@@ -1,5 +1,6 @@
 import requests
 from pathlib import Path
+from scripts import download_file
 
 IMAGES_DIRECTORY = 'images/'
 
@@ -28,14 +29,7 @@ def download_hubble_img(id, directory=IMAGES_DIRECTORY):
     image_url = 'http:' + response.json()['image_files'][-1]['file_url']
     extension = get_extension_file(image_url)
     path = directory / f'{id}.{extension}'
-    print(f'Download image: id {id}')
     download_file(image_url, path)
-
-
-def download_file(url, path: Path):
-    response = requests.get(url)
-    response.raise_for_status()
-    path.write_bytes(response.content)
 
 
 def get_extension_file(url):
