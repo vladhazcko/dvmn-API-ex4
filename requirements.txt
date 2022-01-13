@@ -1,5 +1,5 @@
 requests==2.22.0
 python-dotenv==0.12.0
 pathlib2==2.3.5
-pillow==7.1.1
+pillow==9.0.0
 instabot==0.117.0
